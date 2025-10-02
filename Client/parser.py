@@ -14,8 +14,8 @@ def parse_command(command: str) -> dict:
         # 使用 shlex 拆分，支持引号
         tokens = shlex.split(command)
 
-        if len(tokens) < 4:
-            raise ValueError("命令格式不正确，至少需要 gate 服务器IP及端口 action 以及至少一个payload")
+        if len(tokens) < 3:
+            raise ValueError("命令格式不正确，至少需要 gate 服务器IP及端口 action")
 
         if tokens[0] != "gate":
             raise ValueError("命令必须以 gate 开头")
