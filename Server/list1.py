@@ -22,7 +22,7 @@ async def list1(request: Request):
     links_list = [{"id": l[0], "url": l[1], "note": l[2]} for l in links]
     
 
-    print("假装我是url的list")
+    print(links_list)
     return {
         "action": "list",
         "payload1": links_list

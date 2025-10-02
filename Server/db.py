@@ -9,6 +9,7 @@ def init_db(connection):
     global conn, cursor
     conn = connection
     cursor = conn.cursor()
+    # links 表
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS links (
         id INTEGER PRIMARY KEY,
@@ -16,7 +17,28 @@ def init_db(connection):
         note TEXT
     )
     """)
+    # tags 表
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tags (
+        id INTEGER PRIMARY KEY,
+        tag TEXT NOT NULL UNIQUE
+    )
+    """)
+    # link&tag多对多关系表
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS link_tags (
+        link_id INTEGER NOT NULL,
+        tag_id INTEGER NOT NULL,
+        PRIMARY KEY (link_id, tag_id),
+        FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE,
+        FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+    )
+    """)
     conn.commit()
+
+
+
+
 
 def add_link(url: str):
     """添加链接"""
@@ -41,4 +63,75 @@ def link_exists(url: str) -> bool:
     """检查链接是否存在"""
     cursor.execute("SELECT 1 FROM links WHERE url = ?", (url,))
     return cursor.fetchone() is not None
+
+
+
+def add_tag_to_url(url: str, tag: str):
+    """给指定 url 添加 tag"""
+    # 确保 url 存在
+    cursor.execute("SELECT id FROM links WHERE url = ?", (url,))
+    row = cursor.fetchone()
+    if not row:
+        return False  # url 不存在
+    link_id = row[0]
+
+    # 确保 tag 存在，不存在则创建
+    cursor.execute("INSERT OR IGNORE INTO tags (tag) VALUES (?)", (tag,))
+    conn.commit()
+    cursor.execute("SELECT id FROM tags WHERE tag = ?", (tag,))
+    tag_id = cursor.fetchone()[0]
+
+    # 插入关系
+    cursor.execute("INSERT OR IGNORE INTO link_tags (link_id, tag_id) VALUES (?, ?)", (link_id, tag_id))
+    conn.commit()
+    return True
+
+
+def remove_tag_from_url(url: str, tag: str):
+    """删除 url 的指定 tag"""
+    cursor.execute("SELECT id FROM links WHERE url = ?", (url,))
+    link = cursor.fetchone()
+    if not link:
+        return False
+    link_id = link[0]
+
+    cursor.execute("SELECT id FROM tags WHERE tag = ?", (tag,))
+    t = cursor.fetchone()
+    if not t:
+        return False
+    tag_id = t[0]
+
+    cursor.execute("DELETE FROM link_tags WHERE link_id = ? AND tag_id = ?", (link_id, tag_id))
+    conn.commit()
+    return True
+
+
+def get_tags_by_url(url: str):
+    """查询 url 对应的所有 tag"""
+    cursor.execute("""
+        SELECT tags.tag 
+        FROM tags
+        JOIN link_tags ON tags.id = link_tags.tag_id
+        JOIN links ON links.id = link_tags.link_id
+        WHERE links.url = ?
+    """, (url,))
+    return [row[0] for row in cursor.fetchall()]#形如['工作', '学习']
+
+
+def get_urls_by_tag(tag: str):
+    """查询 tag 对应的所有 url"""
+    cursor.execute("""
+        SELECT links.url
+        FROM links
+        JOIN link_tags ON links.id = link_tags.link_id
+        JOIN tags ON tags.id = link_tags.tag_id
+        WHERE tags.tag = ?
+    """, (tag,))
+    return [row[0] for row in cursor.fetchall()]
+
+
+
+
+
+
 

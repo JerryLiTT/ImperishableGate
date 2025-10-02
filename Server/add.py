@@ -21,18 +21,18 @@ async def add(request: Request):
         if success:
             print("That's an url, 已存入数据库")
             return {
-                "action": "pingtest",
+                "action": "add",
                 "payload1": f"已添加: {url}"
             }
         else:
             return {
-                "action": "pingtest",
+                "action": "add",
                 "payload1": f"链接已存在: {url}"
             }
     else:
         print("That's not an url")
         return {
-            "action": "pingtest",
+            "action": "add",
             "payload1": "That's not an url"
         }
 

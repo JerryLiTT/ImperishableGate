@@ -32,6 +32,9 @@ from pingtest import router as pingtest_router
 from add import router as add_router
 from remove import router as remove_router
 from list1 import router as list_router
+from addtag import router as addtag_router
+from removetag import router as removetag_router
+
 
 import db
 
@@ -47,6 +50,9 @@ app.include_router(pingtest_router)
 app.include_router(add_router)
 app.include_router(remove_router)
 app.include_router(list_router)
+app.include_router(addtag_router)
+app.include_router(removetag_router)
+
 
 
 if __name__ == "__main__":
