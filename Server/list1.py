@@ -17,16 +17,22 @@ async def list1(request: Request):
 
 
     # 调用 db 获取所有链接
-    links = db.get_all_links()
+    urls = db.get_all_links()
     # 格式化返回，方便前端查看
-    links_list = [{"id": l[0], "url": l[1], "note": l[2]} for l in links]
-    
-
-    print(links_list)
-    return {
-        "action": "list",
-        "payload1": links_list
-    }
+    info_of_urls = []
+    if urls:  # 如果非空
+        for url in urls:
+            info_of_urls.append(db.get_info_by_url(url[1]))
+        print(info_of_urls)
+        return {
+            "action": "searchtag",
+            "payload1": info_of_urls
+        }
+    else:
+        return {
+            "action": "list",
+            "payload1": "还没有链接哦，快去添加吧！"
+        }
 
 
 

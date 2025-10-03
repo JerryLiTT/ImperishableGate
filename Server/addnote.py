@@ -14,6 +14,12 @@ async def addnote(request: Request):#这里要修改
     url = data.get("payload2")
     note = data.get("payload1")
 
+    if (db.link_exists(url) == False) and (url in db.get_all_names()):
+        url = db.get_url_by_name(url)
+
+
+
+
     print("收到请求内容:", data)
     print(db.get_note_by_url(url))
 

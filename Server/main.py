@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 import sqlite3
 
+
 '''
 如果你使用
 data = await request.json()
@@ -35,13 +36,18 @@ from pingtest import router as pingtest_router
 from add import router as add_router
 from remove import router as remove_router
 from list1 import router as list_router
+from get import router as get_router
 
 from addtag import router as addtag_router
 from removetag import router as removetag_router
+from searchtag import router as searchtag_router
 
 from addnote import router as addnote_router
 from removenote import router as removenote_router
 from editnote import router as editnote_router
+
+from addname import router as addname_router
+from removename import router as removename_router
 
 
 
@@ -60,13 +66,18 @@ app.include_router(pingtest_router)
 app.include_router(add_router)
 app.include_router(remove_router)
 app.include_router(list_router)
+app.include_router(get_router)
 
 app.include_router(addtag_router)
 app.include_router(removetag_router)
+app.include_router(searchtag_router)
 
 app.include_router(addnote_router)
 app.include_router(removenote_router)
 app.include_router(editnote_router)
+
+app.include_router(addname_router)
+app.include_router(removename_router)
 
 
 

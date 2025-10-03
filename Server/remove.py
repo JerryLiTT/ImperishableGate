@@ -13,10 +13,22 @@ async def remove(request: Request):
     data = await request.json()
     url = data.get("payload1")
 
+    #把name变成url
+    if (db.link_exists(url) == False) and (url in db.get_all_names()):
+        url = db.get_url_by_name(url)
+
+
     print("收到请求内容:", data)
 
     # 检查是否是 url
     if db.link_exists(url):
+        #删除与url绑定的name
+        names = db.get_names_by_url(url)
+        if names:  # 如果非空
+            for nameinnames in names:
+                db.remove_name(nameinnames)
+        
+        #删除url
         db.delete_link(url)
         print(f"已删除: {url}")
         return {
@@ -27,7 +39,7 @@ async def remove(request: Request):
         print(f"删除失败，链接不存在: {url}")
         return {
             "action": "remove",
-            "payload1": f"删除失败，链接不存在: {url}"
+            "payload1": f"删除失败，名字或链接不存在: {url}"
         }
 
 

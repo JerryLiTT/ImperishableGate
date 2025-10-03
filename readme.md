@@ -237,7 +237,7 @@ PS.写给开发，以后需要维护name2url的映射关系，即修改和url有
 
 如果没有name的话，会提示你
 
-`{"action":"removenote","payload1":"删除name失败，name不存在"}`
+`{"action":"removenote","payload1":"删除name失败，name B站 不存在"}`
 
 
 
@@ -259,7 +259,7 @@ PS.写给开发：删除url的时候，需要删除其name
 
 如果没有tag或tag无对应的名字的话，会提示你
 
-`{"action":"searchnote","payload1":"找不到，换个tag试试吧"}`
+`{"action":"searchnote","payload1":"找不到ciallo，换个tag试试吧"}`
 
 
 
@@ -271,12 +271,10 @@ PS.写给开发：删除url的时候，需要删除其name
 
 例如`gate 127.0.0.1:9323 get "B站"`
 
-会返回` {"action":"searchtag","payload1":"["bilibili.com",["B站","bilibili"],"哔哩哔哩，干杯！",["ciallo","acg"]]}`
+会返回` {"action":"get","payload1":"["bilibili.com",["B站","bilibili"],"哔哩哔哩，干杯！",["ciallo","acg"]]}`
 
 如果找不到name或url的话，会提示你
 
 `{"action":"searchnote","payload1":"找不到，换个name/url试试吧"}`
-
-
 
 
