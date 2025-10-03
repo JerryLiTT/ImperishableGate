@@ -66,6 +66,14 @@ def link_exists(url: str) -> bool:
 
 
 
+
+
+
+
+
+
+
+
 def add_tag_to_url(url: str, tag: str):
     """给指定 url 添加 tag"""
     # 确保 url 存在
@@ -131,6 +139,60 @@ def get_urls_by_tag(tag: str):
 
 
 
+
+
+
+
+
+
+
+def add_note_to_url(url: str, note: str) -> bool:
+    """给指定 url 添加 note（仅当该 url 存在且当前 note 为空时成功）"""
+    cursor.execute("SELECT note FROM links WHERE url = ?", (url,))
+    row = cursor.fetchone()
+    if not row:
+        return False  # url 不存在
+    if row[0] is not None:  # 已经有 note
+        return False
+    cursor.execute("UPDATE links SET note = ? WHERE url = ?", (note, url))
+    conn.commit()
+    return True
+
+
+def update_note_of_url(url: str, note: str) -> bool:
+    """修改指定 url 的 note（如果 url 存在则覆盖）"""
+    cursor.execute("SELECT id FROM links WHERE url = ?", (url,))
+    if cursor.fetchone() is None:
+        return False
+    cursor.execute("UPDATE links SET note = ? WHERE url = ?", (note, url))
+    conn.commit()
+    return True
+
+
+def delete_note_of_url(url: str) -> bool:
+    """删除指定 url 的 note（置空）"""
+    cursor.execute("SELECT id FROM links WHERE url = ?", (url,))
+    if cursor.fetchone() is None:
+        return False
+    cursor.execute("UPDATE links SET note = NULL WHERE url = ?", (url,))
+    conn.commit()
+    return True
+
+
+def has_note(url: str) -> bool:
+    """检查指定 url 是否有 note"""
+    cursor.execute("SELECT note FROM links WHERE url = ?", (url,))
+    row = cursor.fetchone()
+    return row is not None and row[0] is not None
+
+
+def get_note_by_url(url: str):
+    """获取指定 url 的 note（如果不存在则返回 None）"""
+    cursor.execute("SELECT note FROM links WHERE url = ?", (url,))
+    row = cursor.fetchone()
+    if not row:
+        return None  # url 不存在
+    return row[0]  # 可能是 str 或 None
 
 
 

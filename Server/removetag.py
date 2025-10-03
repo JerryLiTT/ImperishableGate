@@ -29,7 +29,7 @@ async def removetag(request: Request):#这里要修改
         else:
             return {
                 "action": "removetag",
-                "payload1": "tag " + str(tag) + "doesn't exist or belong to " + str(url)
+                "payload1": "tag " + str(tag) + " doesn't exist or belong to " + str(url)
             }
 
     else:
