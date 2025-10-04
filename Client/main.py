@@ -1,5 +1,6 @@
 import requests
 from parser import parse_command
+import webbrowser
 
 '''
 客户端的主程序
@@ -26,10 +27,18 @@ def main():
     try:
         # 发送 POST 请求
         response = requests.post(url, json=parsed, timeout=5)
+        response_data = response.json()
 
         # 打印返回结果
         print("状态码:", response.status_code)
         print("响应内容:", response.text)
+
+        #open api客户端逻辑
+        if (response_data.get("action")) == 'open' and type(response_data.get("payload1")) == list:
+            for url in response_data.get("payload1"):
+                print(url)
+                webbrowser.open_new_tab(url)
+                
 
     except requests.exceptions.RequestException as e:
         print("请求失败:", e)

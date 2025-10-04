@@ -97,6 +97,13 @@ def link_exists(url: str) -> bool:
 
 
 
+def get_all_tags() -> list:
+    """获取全部 tag（返回纯 tag 列表）"""
+    cursor.execute("SELECT tag FROM tags")
+    return [row[0] for row in cursor.fetchall()]
+
+
+
 def add_tag_to_url(url: str, tag: str):
     """给指定 url 添加 tag"""
     # 确保 url 存在
@@ -379,6 +386,65 @@ def update_metainfo_by_url(url: str, metainfo: dict) -> bool:
     cursor.execute("UPDATE links SET metainfo = ? WHERE url = ?", (metainfo_json, url))
     conn.commit()
     return True
+
+
+
+
+
+def search_all(keyword: str):
+    """全局模糊搜索，返回匹配的 URL 及完整信息 + 匹配来源"""
+    pattern = f"%{keyword}%"
+    matches = {}  # {url: set(匹配字段)}
+
+    # 搜 links 表
+    cursor.execute("""
+        SELECT url, note, metainfo FROM links
+        WHERE url LIKE ? OR note LIKE ? OR metainfo LIKE ?
+    """, (pattern, pattern, pattern))
+    for url, note, metainfo in cursor.fetchall():
+        if url not in matches:
+            matches[url] = set()
+        if keyword.lower() in url.lower():
+            matches[url].add("url")
+        if note and keyword.lower() in note.lower():
+            matches[url].add("note")
+        if metainfo and keyword.lower() in metainfo.lower():
+            matches[url].add("metainfo")
+
+    # 搜 tags
+    cursor.execute("""
+        SELECT links.url, tags.tag
+        FROM links
+        JOIN link_tags ON links.id = link_tags.link_id
+        JOIN tags ON tags.id = link_tags.tag_id
+        WHERE tags.tag LIKE ?
+    """, (pattern,))
+    for url, tag in cursor.fetchall():
+        if url not in matches:
+            matches[url] = set()
+        matches[url].add("tag")
+
+    # 搜 names
+    cursor.execute("""
+        SELECT links.url, names.name
+        FROM links
+        JOIN link_names ON links.id = link_names.link_id
+        JOIN names ON names.id = link_names.name_id
+        WHERE names.name LIKE ?
+    """, (pattern,))
+    for url, name in cursor.fetchall():
+        if url not in matches:
+            matches[url] = set()
+        matches[url].add("name")
+
+    # 拼装结果
+    results = []
+    for url, fields in matches.items():
+        results.append({
+            "info": get_info_by_url(url),  # [url, names, note, tags, metainfo]
+            "matched_fields": list(fields) # ["url", "tag", ...]
+        })
+    return results
 
 
 

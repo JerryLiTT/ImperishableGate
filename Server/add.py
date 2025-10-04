@@ -21,14 +21,15 @@ async def add(request: Request):
         success = db.add_link(url)
         if success:
             print("That's an url, 已存入数据库")
-            metadata = metagrab.get_page_metadata(url)
-            print(metadata)
-            db.update_metainfo_by_url(url, metadata)
-            print(db.update_metainfo_by_url(url, metadata))
             return {
                 "action": "add",
                 "payload1": f"已添加: {url}"
             }
+            metadata = metagrab.get_page_metadata(url)
+            print(metadata)
+            db.update_metainfo_by_url(url, metadata)
+            print(db.update_metainfo_by_url(url, metadata))
+            
         else:
             return {
                 "action": "add",

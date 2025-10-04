@@ -39,6 +39,7 @@ from add import router as add_router
 from remove import router as remove_router
 from list1 import router as list_router
 from get import router as get_router
+from search import router as search_router
 
 from addtag import router as addtag_router
 from removetag import router as removetag_router
@@ -50,6 +51,10 @@ from editnote import router as editnote_router
 
 from addname import router as addname_router
 from removename import router as removename_router
+
+from opener import router as opener_router#叫做opener，但是api还是open
+
+
 
 
 from http_utils import get_status_code
@@ -73,6 +78,7 @@ app.include_router(add_router)
 app.include_router(remove_router)
 app.include_router(list_router)
 app.include_router(get_router)
+app.include_router(search_router)
 
 app.include_router(addtag_router)
 app.include_router(removetag_router)
@@ -84,6 +90,8 @@ app.include_router(editnote_router)
 
 app.include_router(addname_router)
 app.include_router(removename_router)
+
+app.include_router(opener_router)
 
 
 
