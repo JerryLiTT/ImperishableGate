@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Imperishable Gate</title>
+<style>
+  /* 全局样式 */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    min-height: 100vh;
+
+    /* 背景图片 + 渐变叠加 */
+    background-image: 
+      linear-gradient(rgba(245, 250, 255, 0.4), rgba(245, 250, 255, 0.4)), /* 调节图片透明度 */
+      url('http://i0.hdslb.com/bfs/new_dyn/e7a9dbf531d5d63e107b79d430aa3042391865637.jpg');
+    background-size: cover;        
+    background-position: center;   
+    background-repeat: no-repeat;  
+    background-attachment: fixed; /* 背景固定，不随滚动移动 */
+    color: #0d1a33;
+  }
+
+  /* 内容容器 */
+  .container {
+    width: 100%;
+    max-width: 2000px;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.6); /* 容器半透明背景 */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  /* 标题 */
+  h2, h3 {
+    color: #0d1a33;
+  }
+
+  h2 { margin-bottom: 20px; }
+  h3 { margin-top: 30px; margin-bottom: 10px; }
+
+  /* 表单样式 */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+
+  input[type="text"] {
+    padding: 12px 15px;
+    border: 1px solid #aad4ff;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s;
+  }
+
+  input[type="text"]:focus {
+    border-color: #3399ff;
+    box-shadow: 0 0 5px rgba(51, 153, 255, 0.5);
+  }
+
+  button {
+    padding: 12px 15px;
+    background-color: #3399ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover { background-color: #2673cc; }
+
+  /* 小按钮 */
+  .link-button {
+    padding: 8px 12px;  /* 缩小按钮 */
+    font-size: 14px;    /* 调小字体 */
+    background-color: #66b0ff; /* 可自定义颜色 */
+  }
+
+  .link-button:hover {
+    background-color: #3399ff;
+  }
+
+  /* 输出区域样式 */
+  pre {
+    background-color: #e6f0ff;
+    border-left: 4px solid #3399ff;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Imperishable Gate 网页客户端</h1>
+  
+
+  <form onsubmit="sendCommand(); return false;">
+    <input type="text" id="commandInput" placeholder='gate "127.0.0.1:9323" ping "ciallo"'>
+    <button type="submit">发送命令</button>
+
+    <button type="button" class="link-button" onclick="window.open('https://github.com/JerryLiTT/ImperishableGate', '_blank')">
+      不知道命令的语法？看看这里~
+    </button>
+  </form>
+
+  <h3>发往服务器的 JSON:</h3>
+  <pre id="jsonOutput"></pre>
+
+  <h3>服务器响应:</h3>
+  <pre id="responseOutput"></pre>
+</div>
+
+<script>
+function parseCommand(input) {
+    const regex = /[^\s"]+|"([^"]*)"/g;
+    const matches = [];
+    let match;
+    while ((match = regex.exec(input)) !== null) {
+        matches.push(match[1] ? match[1] : match[0]);
+    }
+    return matches;
+}
+
+async function sendCommand() {
+    const input = document.getElementById('commandInput').value.trim();
+    const parts = parseCommand(input);
+
+    if (parts.length < 3) {
+        alert("命令格式不正确，至少需要 gate <server> <action>");
+        return;
+    }
+
+    const server = parts[1];
+    const action = parts[2];
+
+    const payload = { server, action };
+    for (let i = 3; i < parts.length; i++) {
+        payload['payload' + (i - 2)] = parts[i];
+    }
+
+    document.getElementById('jsonOutput').textContent = JSON.stringify(payload, null, 2);
+
+    const url = `http://${server}/${action}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        document.getElementById('responseOutput').textContent = JSON.stringify(result, null, 2);
+    } catch (error) {
+        document.getElementById('responseOutput').textContent = '请求失败: ' + error;
+    }
+}
+</script>
+
+</body>
+</html>

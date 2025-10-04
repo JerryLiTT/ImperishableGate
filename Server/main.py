@@ -66,6 +66,36 @@ import metagrab
 
 app = FastAPI()
 
+
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 或指定你 HTML 的来源
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
+
+
+from fastapi.staticfiles import StaticFiles
+import os
+
+# 获取 main.py 所在目录
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# HTML 文件就是当前目录
+html_dir = BASE_DIR
+
+# 挂载静态文件
+# 访问 /html/ 会显示 index.html
+app.mount("/html", StaticFiles(directory=html_dir, html=True), name="html")
+
+
+
 # 初始化数据库
 conn = sqlite3.connect("links.db", check_same_thread=False)  # FastAPI 要加 check_same_thread=False
 db.init_db(conn)

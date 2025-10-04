@@ -57,6 +57,7 @@ ImperishableGate 基于Python开发，采用简洁的命令行交互模式，每
         │  search.py            # 模糊搜索
         │  searchtag.py         # 搜索带某标签的链接
         │  send_email.py        # 发送提醒邮件
+        │  index.html           # 网页客户端
 ```
 
 ---
@@ -88,6 +89,16 @@ python ./ImperishableGate/Server/main.py
 ```
 python ./ImperishableGate/Client/main.py
 ```
+
+或者，如果你不想专门下载客户端，可以直接访问
+
+```
+http://<服务器IP/域名>:9323/html/
+```
+
+但是网页客户端暂不支持open命令（笑
+
+
 
 > ⚡ 提示：部分功能（如 starred 标签轮询和邮件提醒）需要配置邮箱和查询频次，可在 `./ImperishableGate/Server/main.py` 中设置。
 
@@ -221,7 +232,7 @@ gate "127.0.0.1:9323" list
 会返回：
 
 ```
-{"action":"searchtag","list":[
+{"action":"searchtag","payload1":[
 ["https://www.bing.com",[],"",["starred"],{"title":"","description":"","keywords":"","og:site_name":""}],["https://www.google.com",[],"",[],{"title":"","description":"","keywords":"","og:site_name":""}],["https://www.bilibili.com",[],"",[],{"title":"哔哩哔哩 (゜-゜)つロ 干杯~-bilibili","description":"因为内容太多了，所以略去","og:site_name":""}],["www.acfun.cn",[],"",["acg"],{"title":"AcFun弹幕视频网 - 认真你就输啦 (・ω・)ノ- ( ゜- ゜)つロ","description":"AcFun是国内首家弹幕视频网站，这里有全网独家动漫新番， 友好的弹幕氛围，有趣的UP主，好玩有科技感的虚拟偶像，年轻人都在用。","keywords":"A站 AcFun ACG 弹幕 视频 动画 漫画 游戏 新番 鬼畜 东方 初音 DOTA MUGEN","og:site_name":""}]]}
 ```
 
@@ -706,5 +717,3 @@ gate 127.0.0.1:9323 open aaa.com acg B站
 
 
 ![](https://i0.hdslb.com/bfs/new_dyn/8ea939441347fb849b71113ea3332393515860792.jpg)
-
-
