@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from typing import Dict, Optional
 from charset_normalizer import from_bytes
 from urllib.parse import urlparse
-
+#urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 '''
 from metagrab import get_page_metadata  
 

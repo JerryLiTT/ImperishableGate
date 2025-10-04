@@ -77,7 +77,7 @@ helloworld
 
 
 
-# 将开发命令一览
+# 
 
 ## addtag
 
@@ -99,7 +99,7 @@ helloworld
 
 
 
-
+PS.特别地，如果你的url有一个tag名为special，那么这个url会被列入特别关注列表
 
 PS.后续会开发一次性给多个链接添加tag，一次性给链接添加多个tag的功能
 
