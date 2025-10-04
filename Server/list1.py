@@ -25,7 +25,7 @@ async def list1(request: Request):
             info_of_urls.append(db.get_info_by_url(url[1]))
         print(info_of_urls)
         return {
-            "action": "searchtag",
+            "action": "list",
             "payload1": info_of_urls
         }
     else:
